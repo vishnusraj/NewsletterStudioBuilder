@@ -1,0 +1,26 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
+
+/* Map Figma font class names to proper browser font-weight values */
+[class*="Inter:Black"] {
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 900 !important;
+}
+[class*="Inter:Bold"] {
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 700 !important;
+}
+[class*="Inter:Semi_Bold"] {
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 600 !important;
+}
+[class*="Inter:Medium"] {
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 500 !important;
+}
+[class*="Inter:Regular"] {
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 400 !important;
+}
+[class*="Impact:Regular"] {
+  font-family: 'Impact', 'Arial Narrow', sans-serif !important;
+}
