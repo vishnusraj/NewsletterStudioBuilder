@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { Plus, Trash2, RotateCcw, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import { useNewsletterStore, type RFStatus, WATCH_BADGE_PRESETS } from '../../store/useNewsletterStore';
-import { ModernisationEditor, PortfolioEditor, MetricsEditor, BusinessImpactEditor, WatchItemsEditor, OutcomesEditor } from './SectionDataEditor';
+import { ModernisationEditor, PortfolioEditor, MetricsEditor, BusinessImpactEditor, WatchItemsEditor, OutcomesEditor, MonthlySnapshotEditor, ClientPartnersEditor } from './SectionDataEditor';
 
 // ── All valid RF statuses (order matters — shown in dropdown) ─────────────────
 // 'CLOSED' is added as the last terminal state.
@@ -384,6 +384,52 @@ function WatchItemsDataEditor() {
   return <WatchItemsEditor />;
 }
 
+function ClientPartnersDataEditor() {
+  const { importedData, updateClientPartnerCard } = useNewsletterStore();
+  const prevImportKey = useRef<string>('');
+
+  useEffect(() => {
+    if (!importedData?.client_partners) return;
+    const key = JSON.stringify(importedData.client_partners);
+    if (key === prevImportKey.current) return;
+    prevImportKey.current = key;
+
+    const cp = importedData.client_partners;
+    updateClientPartnerCard('client', {
+      name: cp.client_name ?? undefined,
+      badgeLabel: cp.client_badge ?? undefined,
+      description: cp.client_description ?? undefined,
+    });
+    updateClientPartnerCard('partner', {
+      name: cp.partner_name ?? undefined,
+      badgeLabel: cp.partner_badge ?? undefined,
+      description: cp.partner_description ?? undefined,
+    });
+  }, [importedData, updateClientPartnerCard]);
+
+  return <ClientPartnersEditor />;
+}
+
+function MonthlySnapshotDataEditor() {
+  const { importedData, setMonthlySnapshotData } = useNewsletterStore();
+  const prevImportKey = useRef<string>('');
+
+  useEffect(() => {
+    if (!importedData?.monthly_snapshot) return;
+    const key = JSON.stringify(importedData.monthly_snapshot);
+    if (key === prevImportKey.current) return;
+    prevImportKey.current = key;
+
+    setMonthlySnapshotData({
+      periodLabel: importedData.monthly_snapshot.period_label ?? undefined,
+      headline: importedData.monthly_snapshot.headline ?? undefined,
+      bodyText: importedData.monthly_snapshot.body_text ?? undefined,
+    });
+  }, [importedData, setMonthlySnapshotData]);
+
+  return <MonthlySnapshotEditor />;
+}
+
 function Top3OutcomesDataEditor() {
   const { importedData, setOutcomeItems, outcomeItems } = useNewsletterStore();
   const prevImportKey = useRef<string>('');
@@ -669,13 +715,22 @@ export function ChartDataEditor() {
   const sectionType = selected?.type ?? '';
 
   const isPS  = sectionType === 'production-support';
+  const isCP  = sectionType === 'client-partners';
   const isRF  = sectionType === 'release-forecast';
+  const isMS  = sectionType === 'monthly-snapshot';
   const isMod = sectionType === 'modernisation';
   const isPF  = sectionType === 'portfolio';
   const isMet = sectionType === 'metrics';
   const isBI  = sectionType === 'business-impact';
   const isOut = sectionType === 'top3-outcomes';
   const isWI  = sectionType === 'watch-items';
+
+  if (isCP) return (
+    <div style={{ flex: 1, overflowY: 'auto' }}>
+      <SectionBanner label="Client & Partners" emoji="🤝" />
+      <ClientPartnersDataEditor />
+    </div>
+  );
 
   if (isPS) return (
     <div style={{ flex: 1, overflowY: 'auto' }}>
@@ -688,6 +743,13 @@ export function ChartDataEditor() {
     <div style={{ flex: 1, overflowY: 'auto' }}>
       <SectionBanner label="Release Forecast" emoji="🚀" />
       <RFEditor />
+    </div>
+  );
+
+  if (isMS) return (
+    <div style={{ flex: 1, overflowY: 'auto' }}>
+      <SectionBanner label="Monthly Snapshot" emoji="📋" />
+      <MonthlySnapshotDataEditor />
     </div>
   );
 
@@ -743,7 +805,9 @@ export function ChartDataEditor() {
         Select a dynamic section to edit its data here.
       </p>
       <div style={{ marginTop: 20, display: 'flex', flexDirection: 'column', gap: 8, width: '100%' }}>
+        <FeatureHint icon="🤝" text="Client & Partners — stakeholder intro cards" />
         <FeatureHint icon="📊" text="Key Metrics — add, edit, delete cards" />
+        <FeatureHint icon="📋" text="Monthly Snapshot — live summary block" />
         <FeatureHint icon="💼" text="Business Impact — full table CRUD" />
         <FeatureHint icon="🏆" text="Top 3 Outcomes — dynamic outcome cards" />
         <FeatureHint icon="👁️" text="Watch Items — strategic watch cards" />

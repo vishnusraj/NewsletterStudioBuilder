@@ -31,6 +31,55 @@ export const DEFAULT_FOOTER_DATA: FooterData = {
   dateLine:  '07 Feb 2026 · Confidential',
 };
 
+// ── Client & Partners ──────────────────────────────────────────────────────────
+
+export interface ClientPartnerCard {
+  id: string;
+  name: string;
+  badgeLabel: string;
+  badgeBg: string;
+  badgeColor: string;
+  description: string;
+}
+
+export interface ClientPartnersData {
+  client: ClientPartnerCard;
+  partner: ClientPartnerCard;
+}
+
+export const DEFAULT_CLIENT_PARTNERS_DATA: ClientPartnersData = {
+  client: {
+    id: 'cp-client',
+    name: 'NTH DEGREE',
+    badgeLabel: 'CLIENT ORGANISATION',
+    badgeBg: '#e8e9eb',
+    badgeColor: '#000000',
+    description: 'A leading global trade show management, event marketing, and experiential services company with nearly 50 years of history. Headquartered in Duluth, Georgia — with offices across North America, Europe, and Asia — Nth Degree specialises in exhibit installation, corporate events, and brand activations at flagship shows including CES and major global events.',
+  },
+  partner: {
+    id: 'cp-partner',
+    name: 'SAKSOFT',
+    badgeLabel: 'DELIVERY PARTNER',
+    badgeBg: '#dbeafe',
+    badgeColor: '#1e40af',
+    description: 'A global AI-led digital transformation partner delivering cloud-native engineering, data-driven platforms, and modernisation strategies. Saksoft serves as the strategic delivery partner across product development, platform transformation, and operations.',
+  },
+};
+
+// ── Monthly Snapshot ───────────────────────────────────────────────────────────
+
+export interface MonthlySnapshotData {
+  periodLabel: string;
+  headline: string;
+  bodyText: string;
+}
+
+export const DEFAULT_MONTHLY_SNAPSHOT_DATA: MonthlySnapshotData = {
+  periodLabel: 'MONTHLY SNAPSHOT — FEBRUARY 2026',
+  headline: 'Three Programmes Delivered Material Outcomes. Two Strategic Bets Gaining Momentum.',
+  bodyText: 'Platform reliability was hardened with zero operational disruption, payment accuracy improved reducing finance rework, and field-lead mobile workflows simplified. Cloud consolidation evaluation and FX-Exchange 3.0 are positioning the portfolio for scalable Q2 growth. Production support closed at 77% resolution rate with no critical issues outstanding.',
+};
+
 // ── Key Metrics ───────────────────────────────────────────────────────────────
 
 export interface MetricItem {
@@ -239,6 +288,8 @@ export const DEFAULT_RF_DATA: RFData = {
 export interface VersionSnapshot {
   coverData:            CoverData;
   footerData:           FooterData;
+  clientPartnersData:   ClientPartnersData;
+  monthlySnapshotData:  MonthlySnapshotData;
   keyMetrics:           MetricItem[];
   businessImpactRows:   BIRow[];
   outcomeItems:         OutcomeItem[];
@@ -268,6 +319,8 @@ interface NewsletterStore {
   sections: NewsletterSection[]; selectedSectionId: string | null;
   zoom: number; editMode: boolean; importedData: ImportedData | null;
   coverData: CoverData; footerData: FooterData;
+  clientPartnersData: ClientPartnersData;
+  monthlySnapshotData: MonthlySnapshotData;
   keyMetrics: MetricItem[]; businessImpactRows: BIRow[];
   outcomeItems: OutcomeItem[];
   watchItems: WatchItem[];
@@ -290,6 +343,13 @@ interface NewsletterStore {
   setCoverData: (d: Partial<CoverData>) => void; updateCoverField: (k: keyof CoverData, v: string) => void; resetCoverData: () => void;
   // footer
   updateFooterField: (k: keyof FooterData, v: string) => void; resetFooterData: () => void;
+  // client & partners
+  updateClientPartnerCard: (card: keyof ClientPartnersData, f: Partial<ClientPartnerCard>) => void;
+  resetClientPartnersData: () => void;
+  // monthly snapshot
+  setMonthlySnapshotData: (d: Partial<MonthlySnapshotData>) => void;
+  updateMonthlySnapshotField: (k: keyof MonthlySnapshotData, v: string) => void;
+  resetMonthlySnapshotData: () => void;
   // key metrics
   addMetric: () => void; updateMetric: (id: string, f: Partial<MetricItem>) => void;
   deleteMetric: (id: string) => void; duplicateMetric: (id: string) => void;
@@ -366,6 +426,8 @@ function makeDefaultState() {
     zoom:                 65,
     coverData:            { ...DEFAULT_COVER_DATA },
     footerData:           { ...DEFAULT_FOOTER_DATA },
+    clientPartnersData:   { client: { ...DEFAULT_CLIENT_PARTNERS_DATA.client }, partner: { ...DEFAULT_CLIENT_PARTNERS_DATA.partner } },
+    monthlySnapshotData:  { ...DEFAULT_MONTHLY_SNAPSHOT_DATA },
     keyMetrics:           DEFAULT_METRICS.map(m => ({ ...m })),
     businessImpactRows:   DEFAULT_BI_ROWS.map(r => ({ ...r })),
     outcomeItems:         DEFAULT_OUTCOME_ITEMS.map(i => ({ ...i })),
@@ -433,6 +495,25 @@ export const useNewsletterStore = create<NewsletterStore>()(
       // footer
       updateFooterField: (key, value) => set((s) => ({ footerData: { ...s.footerData, [key]: value } })),
       resetFooterData: () => set({ footerData: { ...DEFAULT_FOOTER_DATA } }),
+
+      // client & partners
+      updateClientPartnerCard: (card, fields) => set((s) => ({
+        clientPartnersData: {
+          ...s.clientPartnersData,
+          [card]: { ...s.clientPartnersData[card], ...fields },
+        },
+      })),
+      resetClientPartnersData: () => set({
+        clientPartnersData: {
+          client: { ...DEFAULT_CLIENT_PARTNERS_DATA.client },
+          partner: { ...DEFAULT_CLIENT_PARTNERS_DATA.partner },
+        },
+      }),
+
+      // monthly snapshot
+      setMonthlySnapshotData: (data) => set((s) => ({ monthlySnapshotData: { ...s.monthlySnapshotData, ...data } })),
+      updateMonthlySnapshotField: (key, value) => set((s) => ({ monthlySnapshotData: { ...s.monthlySnapshotData, [key]: value } })),
+      resetMonthlySnapshotData: () => set({ monthlySnapshotData: { ...DEFAULT_MONTHLY_SNAPSHOT_DATA } }),
 
       // key metrics
       addMetric: () => set((s) => ({ keyMetrics: [...s.keyMetrics, { id: `met-${Date.now()}`, label: 'NEW METRIC', value: '0', subtext: 'Description here', trend: '→ No change', accentColor: '#3b82f6', trendColor: '#3b82f6' }] })),
@@ -568,6 +649,8 @@ export const useNewsletterStore = create<NewsletterStore>()(
         const snapshot: VersionSnapshot = {
           coverData:            { ...s.coverData },
           footerData:           { ...s.footerData },
+          clientPartnersData:   { client: { ...s.clientPartnersData.client }, partner: { ...s.clientPartnersData.partner } },
+          monthlySnapshotData:  { ...s.monthlySnapshotData },
           keyMetrics:           s.keyMetrics.map(m => ({ ...m })),
           businessImpactRows:   s.businessImpactRows.map(r => ({ ...r })),
           outcomeItems:         s.outcomeItems.map(i => ({ ...i })),
@@ -601,6 +684,8 @@ export const useNewsletterStore = create<NewsletterStore>()(
         return {
           coverData:            { ...d.coverData },
           footerData:           { ...d.footerData },
+          clientPartnersData:   d.clientPartnersData ? { client: { ...d.clientPartnersData.client }, partner: { ...d.clientPartnersData.partner } } : { client: { ...DEFAULT_CLIENT_PARTNERS_DATA.client }, partner: { ...DEFAULT_CLIENT_PARTNERS_DATA.partner } },
+          monthlySnapshotData:  d.monthlySnapshotData ? { ...d.monthlySnapshotData } : { ...DEFAULT_MONTHLY_SNAPSHOT_DATA },
           keyMetrics:           d.keyMetrics.map(m => ({ ...m })),
           businessImpactRows:   d.businessImpactRows.map(r => ({ ...r })),
           outcomeItems:         Array.isArray(d.outcomeItems) && d.outcomeItems.length ? d.outcomeItems.map(i => ({ ...i })) : DEFAULT_OUTCOME_ITEMS.map(i => ({ ...i })),
@@ -632,9 +717,9 @@ export const useNewsletterStore = create<NewsletterStore>()(
     {
       name:    'newsletterStudio_state_v1',
       storage: createJSONStorage(makeSafeStorage),
-      version: 6,
+      version: 8,
       partialize: (s) => ({
-        sections: s.sections, zoom: s.zoom, coverData: s.coverData, footerData: s.footerData,
+        sections: s.sections, zoom: s.zoom, coverData: s.coverData, footerData: s.footerData, clientPartnersData: s.clientPartnersData, monthlySnapshotData: s.monthlySnapshotData,
         keyMetrics: s.keyMetrics, businessImpactRows: s.businessImpactRows, outcomeItems: s.outcomeItems, watchItems: s.watchItems,
         themeColors: s.themeColors, psData: s.psData, rfData: s.rfData,
         modernisationItems: s.modernisationItems, portfolioItems: s.portfolioItems,
@@ -650,6 +735,11 @@ export const useNewsletterStore = create<NewsletterStore>()(
             zoom:                 typeof p.zoom==='number' ? p.zoom : d.zoom,
             coverData:            p.coverData ? {...d.coverData,...(p.coverData as object)} : d.coverData,
             footerData:           p.footerData ? {...d.footerData,...(p.footerData as object)} : d.footerData,
+            clientPartnersData:   p.clientPartnersData ? {
+              client: { ...d.clientPartnersData.client, ...((p.clientPartnersData as any).client ?? {}) },
+              partner: { ...d.clientPartnersData.partner, ...((p.clientPartnersData as any).partner ?? {}) },
+            } : d.clientPartnersData,
+            monthlySnapshotData:  p.monthlySnapshotData ? {...d.monthlySnapshotData,...(p.monthlySnapshotData as object)} : d.monthlySnapshotData,
             keyMetrics:           Array.isArray(p.keyMetrics)&&p.keyMetrics.length ? p.keyMetrics as MetricItem[] : d.keyMetrics,
             businessImpactRows:   Array.isArray(p.businessImpactRows)&&p.businessImpactRows.length ? p.businessImpactRows as BIRow[] : d.businessImpactRows,
             outcomeItems:         Array.isArray(p.outcomeItems)&&p.outcomeItems.length ? p.outcomeItems as OutcomeItem[] : d.outcomeItems,

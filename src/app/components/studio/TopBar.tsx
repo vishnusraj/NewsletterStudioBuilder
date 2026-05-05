@@ -44,6 +44,31 @@ function applyImportToStore(data: ImportedData, store: ReturnType<typeof useNews
     if (dl) store.updateFooterField('dateLine', dl);
   }
 
+  // ── Client & Partners ───────────────────────────────────────────────────────
+  if (data.client_partners) {
+    const cp = data.client_partners;
+    store.updateClientPartnerCard('client', {
+      name: cp.client_name ?? undefined,
+      badgeLabel: cp.client_badge ?? undefined,
+      description: cp.client_description ?? undefined,
+    });
+    store.updateClientPartnerCard('partner', {
+      name: cp.partner_name ?? undefined,
+      badgeLabel: cp.partner_badge ?? undefined,
+      description: cp.partner_description ?? undefined,
+    });
+  }
+
+  // ── Monthly Snapshot ────────────────────────────────────────────────────────
+  if (data.monthly_snapshot) {
+    const ms = data.monthly_snapshot;
+    store.setMonthlySnapshotData({
+      periodLabel: ms.period_label ?? undefined,
+      headline: ms.headline ?? undefined,
+      bodyText: ms.body_text ?? undefined,
+    });
+  }
+
   // ── Key Metrics (dedicated Key_Metrics sheet takes priority) ───────────────
   if (Array.isArray(data.key_metrics) && data.key_metrics.length) {
     const newMetrics = data.key_metrics.map((m, i) => {
@@ -330,6 +355,8 @@ export function TopBar({ canvasRef }: TopBarProps) {
         state.sections    !== prev.sections    ||
         state.coverData   !== prev.coverData   ||
         state.footerData  !== prev.footerData  ||
+        state.clientPartnersData !== prev.clientPartnersData ||
+        state.monthlySnapshotData !== prev.monthlySnapshotData ||
         state.keyMetrics  !== prev.keyMetrics  ||
         state.businessImpactRows !== prev.businessImpactRows ||
         state.outcomeItems !== prev.outcomeItems ||

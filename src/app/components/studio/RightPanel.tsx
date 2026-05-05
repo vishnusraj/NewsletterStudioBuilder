@@ -65,7 +65,7 @@ function InspectTab() {
   const isFooterSelected = selectedSectionId === '__footer__';
 
   const isDataSection = [
-    'production-support', 'release-forecast', 'modernisation', 'portfolio',
+    'client-partners', 'monthly-snapshot', 'production-support', 'release-forecast', 'modernisation', 'portfolio',
     'metrics', 'business-impact', 'top3-outcomes', 'watch-items',
   ].includes(selectedSection?.type ?? '');
 
@@ -343,6 +343,8 @@ export function RightPanel() {
       if (isFooterSelected) {
         setActiveTab('footer');
       } else if (
+        selectedType === 'client-partners'    ||
+        selectedType === 'monthly-snapshot'   ||
         selectedType === 'production-support' ||
         selectedType === 'release-forecast'   ||
         selectedType === 'modernisation'       ||
@@ -380,6 +382,8 @@ export function RightPanel() {
           // Highlight cues based on selected context
           const isDataHighlighted =
             tab.id === 'data' && (
+              selectedType === 'client-partners'    ||
+              selectedType === 'monthly-snapshot'   ||
               selectedType === 'production-support' ||
               selectedType === 'release-forecast'   ||
               selectedType === 'modernisation'       ||

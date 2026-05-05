@@ -17,6 +17,8 @@ import { BusinessImpactSection } from './BusinessImpactSection';
 import { FooterSection } from './FooterSection';
 import { WatchItemsSection } from './WatchItemsSection';
 import { Top3OutcomesSection } from './Top3OutcomesSection';
+import { MonthlySnapshotSection } from './MonthlySnapshotSection';
+import { ClientPartnersSection } from './ClientPartnersSection';
 
 interface NewsletterCanvasProps {
   canvasRef: React.MutableRefObject<HTMLDivElement | null>;
@@ -30,9 +32,17 @@ const PS_CONTAINER = document.createElement('div');
 PS_CONTAINER.style.width = '100%';
 PS_CONTAINER.setAttribute('data-dynamic-section', 'production-support');
 
+const CLIENT_PARTNERS_CONTAINER = document.createElement('div');
+CLIENT_PARTNERS_CONTAINER.style.width = '100%';
+CLIENT_PARTNERS_CONTAINER.setAttribute('data-dynamic-section', 'client-partners');
+
 const RF_CONTAINER = document.createElement('div');
 RF_CONTAINER.style.width = '100%';
 RF_CONTAINER.setAttribute('data-dynamic-section', 'release-forecast');
+
+const SNAPSHOT_CONTAINER = document.createElement('div');
+SNAPSHOT_CONTAINER.style.width = '100%';
+SNAPSHOT_CONTAINER.setAttribute('data-dynamic-section', 'monthly-snapshot');
 
 const MOD_CONTAINER = document.createElement('div');
 MOD_CONTAINER.style.width = '100%';
@@ -66,7 +76,9 @@ FOOTER_CONTAINER.setAttribute('data-dynamic-section', 'footer');
 // ── Dynamic section types ─────────────────────────────────────────────────────
 const DYNAMIC_SECTION_TYPES = new Set([
   'production-support',
+  'client-partners',
   'release-forecast',
+  'monthly-snapshot',
   'modernisation',
   'portfolio',
   'metrics',
@@ -155,7 +167,9 @@ export function NewsletterCanvas({ canvasRef }: NewsletterCanvasProps) {
   const editModeRef             = useRef(false);
   const selectSectionFn         = useRef<(id: string | null) => void>(() => {});
   const psSectionIdRef          = useRef<string | null>(null);
+  const clientPartnersSectionIdRef = useRef<string | null>(null);
   const rfSectionIdRef          = useRef<string | null>(null);
+  const snapshotSectionIdRef    = useRef<string | null>(null);
   const modSectionIdRef         = useRef<string | null>(null);
   const portfolioSectionIdRef   = useRef<string | null>(null);
   const metricsSectionIdRef     = useRef<string | null>(null);
@@ -215,7 +229,9 @@ export function NewsletterCanvas({ canvasRef }: NewsletterCanvasProps) {
       };
     }
     PS_CONTAINER.addEventListener('click',        makeHandler(psSectionIdRef));
+    CLIENT_PARTNERS_CONTAINER.addEventListener('click', makeHandler(clientPartnersSectionIdRef));
     RF_CONTAINER.addEventListener('click',        makeHandler(rfSectionIdRef));
+    SNAPSHOT_CONTAINER.addEventListener('click',  makeHandler(snapshotSectionIdRef));
     MOD_CONTAINER.addEventListener('click',       makeHandler(modSectionIdRef));
     PORTFOLIO_CONTAINER.addEventListener('click', makeHandler(portfolioSectionIdRef));
     METRICS_CONTAINER.addEventListener('click',   makeHandler(metricsSectionIdRef));
@@ -285,7 +301,9 @@ export function NewsletterCanvas({ canvasRef }: NewsletterCanvasProps) {
         let container: HTMLElement;
         switch (section.type) {
           case 'production-support': container = PS_CONTAINER;        psSectionIdRef.current        = section.id; break;
+          case 'client-partners':    container = CLIENT_PARTNERS_CONTAINER; clientPartnersSectionIdRef.current = section.id; break;
           case 'release-forecast':   container = RF_CONTAINER;        rfSectionIdRef.current        = section.id; break;
+          case 'monthly-snapshot':   container = SNAPSHOT_CONTAINER;  snapshotSectionIdRef.current  = section.id; break;
           case 'modernisation':      container = MOD_CONTAINER;       modSectionIdRef.current       = section.id; break;
           case 'portfolio':          container = PORTFOLIO_CONTAINER; portfolioSectionIdRef.current = section.id; break;
           case 'metrics':            container = METRICS_CONTAINER;   metricsSectionIdRef.current   = section.id; break;
@@ -552,7 +570,9 @@ export function NewsletterCanvas({ canvasRef }: NewsletterCanvasProps) {
 
       {/* React portals — rendered into stable module-level DOM containers */}
       {loaded && createPortal(<ProductionSupportSection />, PS_CONTAINER)}
+      {loaded && createPortal(<ClientPartnersSection />,    CLIENT_PARTNERS_CONTAINER)}
       {loaded && createPortal(<ReleaseForecastSection />,   RF_CONTAINER)}
+      {loaded && createPortal(<MonthlySnapshotSection />,   SNAPSHOT_CONTAINER)}
       {loaded && createPortal(<ModernisationSection />,     MOD_CONTAINER)}
       {loaded && createPortal(<PortfolioSection />,         PORTFOLIO_CONTAINER)}
       {loaded && createPortal(<MetricsSection />,           METRICS_CONTAINER)}

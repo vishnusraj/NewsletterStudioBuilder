@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Plus, Trash2, Copy, RotateCcw, ChevronDown, ChevronUp } from 'lucide-react';
 import {
   useNewsletterStore,
+  type ClientPartnerCard,
   type ModernisationItem,
   type PortfolioItem,
   type WatchItem,
@@ -34,6 +35,17 @@ const sectionTitle: React.CSSProperties = {
 
 function Divider() {
   return <div style={{ height: 1, background: '#f3f4f6', margin: '10px 0' }} />;
+}
+
+function ColorInput({ value, onChange }: { value: string; onChange: (value: string) => void }) {
+  return (
+    <input
+      type="color"
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      style={{ width: '100%', height: 26, border: '1px solid #e5e7eb', borderRadius: 3, cursor: 'pointer', padding: 1 }}
+    />
+  );
 }
 
 function ResetButton({ label: txt, onReset }: { label: string; onReset: () => void }) {
@@ -605,7 +617,116 @@ export function PortfolioEditor() {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// 5. TOP 3 OUTCOMES EDITOR
+// 5. CLIENT & PARTNERS EDITOR
+// ═══════════════════════════════════════════════════════════════════════════════
+
+function ClientPartnerCardEditor({
+  title,
+  card,
+  onUpdate,
+}: {
+  title: string;
+  card: ClientPartnerCard;
+  onUpdate: (fields: Partial<ClientPartnerCard>) => void;
+}) {
+  return (
+    <div style={{ border: '1px solid #e5e7eb', borderRadius: 4, background: '#fafafa', padding: 8 }}>
+      <p style={{ ...sectionTitle, marginTop: 0 }}>{title}</p>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+        <div>
+          <p style={lbl}>Name</p>
+          <input style={{ ...cell, fontWeight: 900 }} value={card.name} onChange={e => onUpdate({ name: e.target.value })} />
+        </div>
+        <div>
+          <p style={lbl}>Badge Label</p>
+          <input style={{ ...cell, textTransform: 'uppercase', fontWeight: 700 }} value={card.badgeLabel} onChange={e => onUpdate({ badgeLabel: e.target.value })} />
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4 }}>
+          <div>
+            <p style={lbl}>Badge Background</p>
+            <ColorInput value={card.badgeBg} onChange={(badgeBg) => onUpdate({ badgeBg })} />
+          </div>
+          <div>
+            <p style={lbl}>Badge Text Color</p>
+            <ColorInput value={card.badgeColor} onChange={(badgeColor) => onUpdate({ badgeColor })} />
+          </div>
+        </div>
+        <div>
+          <p style={lbl}>Description</p>
+          <textarea style={{ ...cell, minHeight: 112, resize: 'vertical' }} value={card.description} onChange={e => onUpdate({ description: e.target.value })} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function ClientPartnersEditor() {
+  const { clientPartnersData, updateClientPartnerCard, resetClientPartnersData } = useNewsletterStore();
+
+  return (
+    <div style={{ padding: '12px 14px', fontFamily: 'Inter, sans-serif' }}>
+      <div style={{ display: 'flex', gap: 6, marginBottom: 12 }}>
+        <div style={{ flex: 1, background: '#f9fafb', borderRadius: 4, padding: '5px 6px', border: '1px solid #f3f4f6', textAlign: 'center' }}>
+          <div style={{ fontSize: 9, color: '#9ca3af', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Cards</div>
+          <div style={{ fontSize: 16, fontWeight: 900, color: '#1a1a1a', marginTop: 1 }}>2</div>
+        </div>
+        <div style={{ flex: 2, background: '#eff6ff', borderRadius: 4, padding: '5px 8px', border: '1px solid #bfdbfe', display: 'flex', alignItems: 'center' }}>
+          <span style={{ fontSize: 9, color: '#1d4ed8', fontWeight: 600 }}>Stakeholder intro cards</span>
+        </div>
+      </div>
+      <Divider />
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <ClientPartnerCardEditor title="Client" card={clientPartnersData.client} onUpdate={(fields) => updateClientPartnerCard('client', fields)} />
+        <ClientPartnerCardEditor title="Partner" card={clientPartnersData.partner} onUpdate={(fields) => updateClientPartnerCard('partner', fields)} />
+      </div>
+      <Divider />
+      <ResetButton label="Reset client & partners" onReset={resetClientPartnersData} />
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// 6. MONTHLY SNAPSHOT EDITOR
+// ═══════════════════════════════════════════════════════════════════════════════
+
+export function MonthlySnapshotEditor() {
+  const { monthlySnapshotData, updateMonthlySnapshotField, resetMonthlySnapshotData } = useNewsletterStore();
+
+  return (
+    <div style={{ padding: '12px 14px', fontFamily: 'Inter, sans-serif' }}>
+      <div style={{ display: 'flex', gap: 6, marginBottom: 12 }}>
+        <div style={{ flex: 1, background: '#f9fafb', borderRadius: 4, padding: '5px 6px', border: '1px solid #f3f4f6', textAlign: 'center' }}>
+          <div style={{ fontSize: 9, color: '#9ca3af', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Section</div>
+          <div style={{ fontSize: 16, fontWeight: 900, color: '#1a1a1a', marginTop: 1 }}>1</div>
+        </div>
+        <div style={{ flex: 2, background: '#eff6ff', borderRadius: 4, padding: '5px 8px', border: '1px solid #bfdbfe', display: 'flex', alignItems: 'center' }}>
+          <span style={{ fontSize: 9, color: '#1d4ed8', fontWeight: 600 }}>Executive summary block</span>
+        </div>
+      </div>
+      <Divider />
+      <p style={sectionTitle}>Snapshot Content</p>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+        <div>
+          <p style={lbl}>Period Label</p>
+          <input style={{ ...cell, textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.08em' }} value={monthlySnapshotData.periodLabel} onChange={e => updateMonthlySnapshotField('periodLabel', e.target.value)} />
+        </div>
+        <div>
+          <p style={lbl}>Headline</p>
+          <textarea style={{ ...cell, minHeight: 72, resize: 'vertical', fontWeight: 700, fontSize: 12 }} value={monthlySnapshotData.headline} onChange={e => updateMonthlySnapshotField('headline', e.target.value)} />
+        </div>
+        <div>
+          <p style={lbl}>Body Text</p>
+          <textarea style={{ ...cell, minHeight: 120, resize: 'vertical' }} value={monthlySnapshotData.bodyText} onChange={e => updateMonthlySnapshotField('bodyText', e.target.value)} />
+        </div>
+      </div>
+      <Divider />
+      <ResetButton label="Reset monthly snapshot" onReset={resetMonthlySnapshotData} />
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// 7. TOP 3 OUTCOMES EDITOR
 // ═══════════════════════════════════════════════════════════════════════════════
 
 function OutcomeItemEditor({
@@ -703,7 +824,7 @@ export function OutcomesEditor() {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// 6. WATCH ITEMS EDITOR
+// 8. WATCH ITEMS EDITOR
 // ═══════════════════════════════════════════════════════════════════════════════
 
 const WATCH_PRESETS = [
