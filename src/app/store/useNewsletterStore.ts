@@ -80,6 +80,10 @@ export const DEFAULT_MONTHLY_SNAPSHOT_DATA: MonthlySnapshotData = {
   bodyText: 'Platform reliability was hardened with zero operational disruption, payment accuracy improved reducing finance rework, and field-lead mobile workflows simplified. Cloud consolidation evaluation and FX-Exchange 3.0 are positioning the portfolio for scalable Q2 growth. Production support closed at 77% resolution rate with no critical issues outstanding.',
 };
 
+export const DEFAULT_BUSINESS_IMPACT_HEADER_LABEL = 'LAST 30 DAYS';
+export const DEFAULT_OUTCOMES_HEADER_LABEL = 'VALUE DELIVERED';
+export const DEFAULT_MODERNISATION_HEADER_LABEL = 'STRATEGIC INVESTMENTS';
+
 // ── Key Metrics ───────────────────────────────────────────────────────────────
 
 export interface MetricItem {
@@ -240,7 +244,7 @@ export interface PSChartRow { id: string; systemName: string; reported: number; 
 
 export interface PSData {
   rows: PSChartRow[]; reportedColor: string; resolvedColor: string;
-  resolutionNote: string; carriedNote: string;
+  resolutionNote: string; carriedNote: string; periodLabel: string;
 }
 
 export const DEFAULT_PS_DATA: PSData = {
@@ -251,7 +255,7 @@ export const DEFAULT_PS_DATA: PSData = {
     { id: 'ps-4', systemName: 'Middleware', reported: 3, resolved: 2 },
   ],
   reportedColor: '#041627', resolvedColor: '#f87171',
-  resolutionNote: 'All P1/P2 Issues Closed', carriedNote: 'No critical items outstanding',
+  resolutionNote: 'All P1/P2 Issues Closed', carriedNote: 'No critical items outstanding', periodLabel: 'FEBRUARY 2026',
 };
 
 // ── Release Forecast ──────────────────────────────────────────────────────────
@@ -266,13 +270,14 @@ export interface RFRow {
   colorOverride?: string;   // ← NEW: user-defined bar color (overrides status color)
 }
 
-export interface RFData { cards: RFCard[]; rows: RFRow[]; }
+export interface RFData { cards: RFCard[]; rows: RFRow[]; headerLabel: string; }
 
 export const DEFAULT_RF_DATA: RFData = {
   cards: [
     { id: 'rf-c1', title: 'Show-Sight Mobile V2.0.0',         date: 'MAR 2026', description: 'Upgraded Job Search, show-specific photo categories, Evaluation submissions, and Safety Meeting Topics.' },
     { id: 'rf-c2', title: 'Fern Onboarding Self-Registration', date: 'MAR 2026', description: 'Eliminates manual onboarding bottlenecks. Self-registration with optimised approval flow.' },
   ],
+  headerLabel: 'UPCOMING RELEASES',
   rows: [
     { id: 'rf-1', project: 'On-Sight',   releaseItem: 'Lead Travel Expense App',           progress: 100, schedule: 'Releasing Mar 2026', status: 'ON TRACK' },
     { id: 'rf-2', project: 'On-Sight',   releaseItem: 'Fern Onboarding Phase 2',           progress: 75,  schedule: 'Mar — Apr 2026',      status: 'ON TRACK' },
@@ -290,6 +295,9 @@ export interface VersionSnapshot {
   footerData:           FooterData;
   clientPartnersData:   ClientPartnersData;
   monthlySnapshotData:  MonthlySnapshotData;
+  businessImpactHeaderLabel: string;
+  outcomesHeaderLabel: string;
+  modernisationHeaderLabel: string;
   keyMetrics:           MetricItem[];
   businessImpactRows:   BIRow[];
   outcomeItems:         OutcomeItem[];
@@ -321,6 +329,9 @@ interface NewsletterStore {
   coverData: CoverData; footerData: FooterData;
   clientPartnersData: ClientPartnersData;
   monthlySnapshotData: MonthlySnapshotData;
+  businessImpactHeaderLabel: string;
+  outcomesHeaderLabel: string;
+  modernisationHeaderLabel: string;
   keyMetrics: MetricItem[]; businessImpactRows: BIRow[];
   outcomeItems: OutcomeItem[];
   watchItems: WatchItem[];
@@ -350,6 +361,10 @@ interface NewsletterStore {
   setMonthlySnapshotData: (d: Partial<MonthlySnapshotData>) => void;
   updateMonthlySnapshotField: (k: keyof MonthlySnapshotData, v: string) => void;
   resetMonthlySnapshotData: () => void;
+  // section header labels
+  setBusinessImpactHeaderLabel: (v: string) => void;
+  setOutcomesHeaderLabel: (v: string) => void;
+  setModernisationHeaderLabel: (v: string) => void;
   // key metrics
   addMetric: () => void; updateMetric: (id: string, f: Partial<MetricItem>) => void;
   deleteMetric: (id: string) => void; duplicateMetric: (id: string) => void;
@@ -374,11 +389,13 @@ interface NewsletterStore {
   setPSData: (d: PSData) => void; updatePSRow: (id: string, f: Partial<PSChartRow>) => void;
   addPSRow: () => void; deletePSRow: (id: string) => void;
   setPSColor: (k: 'reportedColor' | 'resolvedColor', c: string) => void;
+  setPSPeriodLabel: (v: string) => void;
   setPSNote: (k: 'resolutionNote' | 'carriedNote', v: string) => void; resetPSData: () => void;
   // rf
   setRFData: (d: RFData) => void; updateRFRow: (id: string, f: Partial<RFRow>) => void;
   addRFRow: () => void; deleteRFRow: (id: string) => void;
   updateRFCard: (id: string, f: Partial<RFCard>) => void; addRFCard: () => void;
+  setRFHeaderLabel: (v: string) => void;
   deleteRFCard: (id: string) => void; resetRFData: () => void;
   // modernisation
   addModernisationItem: () => void; updateModernisationItem: (id: string, f: Partial<ModernisationItem>) => void;
@@ -428,6 +445,9 @@ function makeDefaultState() {
     footerData:           { ...DEFAULT_FOOTER_DATA },
     clientPartnersData:   { client: { ...DEFAULT_CLIENT_PARTNERS_DATA.client }, partner: { ...DEFAULT_CLIENT_PARTNERS_DATA.partner } },
     monthlySnapshotData:  { ...DEFAULT_MONTHLY_SNAPSHOT_DATA },
+    businessImpactHeaderLabel: DEFAULT_BUSINESS_IMPACT_HEADER_LABEL,
+    outcomesHeaderLabel: DEFAULT_OUTCOMES_HEADER_LABEL,
+    modernisationHeaderLabel: DEFAULT_MODERNISATION_HEADER_LABEL,
     keyMetrics:           DEFAULT_METRICS.map(m => ({ ...m })),
     businessImpactRows:   DEFAULT_BI_ROWS.map(r => ({ ...r })),
     outcomeItems:         DEFAULT_OUTCOME_ITEMS.map(i => ({ ...i })),
@@ -515,6 +535,11 @@ export const useNewsletterStore = create<NewsletterStore>()(
       updateMonthlySnapshotField: (key, value) => set((s) => ({ monthlySnapshotData: { ...s.monthlySnapshotData, [key]: value } })),
       resetMonthlySnapshotData: () => set({ monthlySnapshotData: { ...DEFAULT_MONTHLY_SNAPSHOT_DATA } }),
 
+      // section header labels
+      setBusinessImpactHeaderLabel: (value) => set({ businessImpactHeaderLabel: value }),
+      setOutcomesHeaderLabel: (value) => set({ outcomesHeaderLabel: value }),
+      setModernisationHeaderLabel: (value) => set({ modernisationHeaderLabel: value }),
+
       // key metrics
       addMetric: () => set((s) => ({ keyMetrics: [...s.keyMetrics, { id: `met-${Date.now()}`, label: 'NEW METRIC', value: '0', subtext: 'Description here', trend: '→ No change', accentColor: '#3b82f6', trendColor: '#3b82f6' }] })),
       updateMetric: (id, fields) => set((s) => ({ keyMetrics: s.keyMetrics.map(m => m.id===id ? {...m,...fields} : m) })),
@@ -595,6 +620,7 @@ export const useNewsletterStore = create<NewsletterStore>()(
       addPSRow: () => set((s) => ({ psData: { ...s.psData, rows: [...s.psData.rows, { id: `ps-${Date.now()}`, systemName: 'New System', reported: 0, resolved: 0 }] } })),
       deletePSRow: (id) => set((s) => ({ psData: { ...s.psData, rows: s.psData.rows.filter(r => r.id!==id) } })),
       setPSColor: (key, color) => set((s) => ({ psData: { ...s.psData, [key]: color } })),
+      setPSPeriodLabel: (value) => set((s) => ({ psData: { ...s.psData, periodLabel: value } })),
       setPSNote: (key, value) => set((s) => ({ psData: { ...s.psData, [key]: value } })),
       resetPSData: () => set({ psData: { ...DEFAULT_PS_DATA, rows: DEFAULT_PS_DATA.rows.map(r => ({...r})) } }),
 
@@ -605,6 +631,7 @@ export const useNewsletterStore = create<NewsletterStore>()(
       deleteRFRow: (id) => set((s) => ({ rfData: { ...s.rfData, rows: s.rfData.rows.filter(r => r.id!==id) } })),
       updateRFCard: (id, fields) => set((s) => ({ rfData: { ...s.rfData, cards: s.rfData.cards.map(c => c.id===id ? {...c,...fields} : c) } })),
       addRFCard: () => set((s) => ({ rfData: { ...s.rfData, cards: [...s.rfData.cards, { id: `rf-card-${Date.now()}`, title: 'New Release', date: 'TBD', description: 'Description here.' }] } })),
+      setRFHeaderLabel: (value) => set((s) => ({ rfData: { ...s.rfData, headerLabel: value } })),
       deleteRFCard: (id) => set((s) => ({ rfData: { ...s.rfData, cards: s.rfData.cards.filter(c => c.id!==id) } })),
       resetRFData: () => set({ rfData: { cards: DEFAULT_RF_DATA.cards.map(c => ({...c})), rows: DEFAULT_RF_DATA.rows.map(r => ({...r})) } }),
 
@@ -651,6 +678,9 @@ export const useNewsletterStore = create<NewsletterStore>()(
           footerData:           { ...s.footerData },
           clientPartnersData:   { client: { ...s.clientPartnersData.client }, partner: { ...s.clientPartnersData.partner } },
           monthlySnapshotData:  { ...s.monthlySnapshotData },
+          businessImpactHeaderLabel: s.businessImpactHeaderLabel,
+          outcomesHeaderLabel: s.outcomesHeaderLabel,
+          modernisationHeaderLabel: s.modernisationHeaderLabel,
           keyMetrics:           s.keyMetrics.map(m => ({ ...m })),
           businessImpactRows:   s.businessImpactRows.map(r => ({ ...r })),
           outcomeItems:         s.outcomeItems.map(i => ({ ...i })),
@@ -686,6 +716,9 @@ export const useNewsletterStore = create<NewsletterStore>()(
           footerData:           { ...d.footerData },
           clientPartnersData:   d.clientPartnersData ? { client: { ...d.clientPartnersData.client }, partner: { ...d.clientPartnersData.partner } } : { client: { ...DEFAULT_CLIENT_PARTNERS_DATA.client }, partner: { ...DEFAULT_CLIENT_PARTNERS_DATA.partner } },
           monthlySnapshotData:  d.monthlySnapshotData ? { ...d.monthlySnapshotData } : { ...DEFAULT_MONTHLY_SNAPSHOT_DATA },
+          businessImpactHeaderLabel: d.businessImpactHeaderLabel ?? DEFAULT_BUSINESS_IMPACT_HEADER_LABEL,
+          outcomesHeaderLabel: d.outcomesHeaderLabel ?? DEFAULT_OUTCOMES_HEADER_LABEL,
+          modernisationHeaderLabel: d.modernisationHeaderLabel ?? DEFAULT_MODERNISATION_HEADER_LABEL,
           keyMetrics:           d.keyMetrics.map(m => ({ ...m })),
           businessImpactRows:   d.businessImpactRows.map(r => ({ ...r })),
           outcomeItems:         Array.isArray(d.outcomeItems) && d.outcomeItems.length ? d.outcomeItems.map(i => ({ ...i })) : DEFAULT_OUTCOME_ITEMS.map(i => ({ ...i })),
@@ -717,9 +750,9 @@ export const useNewsletterStore = create<NewsletterStore>()(
     {
       name:    'newsletterStudio_state_v1',
       storage: createJSONStorage(makeSafeStorage),
-      version: 8,
+      version: 9,
       partialize: (s) => ({
-        sections: s.sections, zoom: s.zoom, coverData: s.coverData, footerData: s.footerData, clientPartnersData: s.clientPartnersData, monthlySnapshotData: s.monthlySnapshotData,
+        sections: s.sections, zoom: s.zoom, coverData: s.coverData, footerData: s.footerData, clientPartnersData: s.clientPartnersData, monthlySnapshotData: s.monthlySnapshotData, businessImpactHeaderLabel: s.businessImpactHeaderLabel, outcomesHeaderLabel: s.outcomesHeaderLabel, modernisationHeaderLabel: s.modernisationHeaderLabel,
         keyMetrics: s.keyMetrics, businessImpactRows: s.businessImpactRows, outcomeItems: s.outcomeItems, watchItems: s.watchItems,
         themeColors: s.themeColors, psData: s.psData, rfData: s.rfData,
         modernisationItems: s.modernisationItems, portfolioItems: s.portfolioItems,
@@ -740,6 +773,9 @@ export const useNewsletterStore = create<NewsletterStore>()(
               partner: { ...d.clientPartnersData.partner, ...((p.clientPartnersData as any).partner ?? {}) },
             } : d.clientPartnersData,
             monthlySnapshotData:  p.monthlySnapshotData ? {...d.monthlySnapshotData,...(p.monthlySnapshotData as object)} : d.monthlySnapshotData,
+            businessImpactHeaderLabel: typeof p.businessImpactHeaderLabel === 'string' ? p.businessImpactHeaderLabel : d.businessImpactHeaderLabel,
+            outcomesHeaderLabel: typeof p.outcomesHeaderLabel === 'string' ? p.outcomesHeaderLabel : d.outcomesHeaderLabel,
+            modernisationHeaderLabel: typeof p.modernisationHeaderLabel === 'string' ? p.modernisationHeaderLabel : d.modernisationHeaderLabel,
             keyMetrics:           Array.isArray(p.keyMetrics)&&p.keyMetrics.length ? p.keyMetrics as MetricItem[] : d.keyMetrics,
             businessImpactRows:   Array.isArray(p.businessImpactRows)&&p.businessImpactRows.length ? p.businessImpactRows as BIRow[] : d.businessImpactRows,
             outcomeItems:         Array.isArray(p.outcomeItems)&&p.outcomeItems.length ? p.outcomeItems as OutcomeItem[] : d.outcomeItems,

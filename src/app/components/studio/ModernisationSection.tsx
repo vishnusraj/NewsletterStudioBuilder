@@ -79,7 +79,7 @@ function InitiativeCard({ item }: { item: ModernisationItem }) {
 }
 
 export function ModernisationSection() {
-  const { modernisationItems } = useNewsletterStore();
+  const { modernisationItems, modernisationHeaderLabel } = useNewsletterStore();
   const items = modernisationItems;
 
   // Pair items into rows of 2 (matching Figma Frame3 + Frame4 layout)
@@ -105,7 +105,7 @@ export function ModernisationSection() {
           </span>
         </div>
         <span style={{ ...S, fontWeight: 700, fontSize: 9, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.9px' }}>
-          STRATEGIC INVESTMENTS
+          {modernisationHeaderLabel}
         </span>
       </div>
 

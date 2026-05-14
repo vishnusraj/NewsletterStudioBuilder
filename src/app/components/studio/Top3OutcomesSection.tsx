@@ -121,6 +121,7 @@ function OutcomeCard({
 
 export function Top3OutcomesSection() {
   const outcomeItems = useNewsletterStore((s) => s.outcomeItems);
+  const outcomesHeaderLabel = useNewsletterStore((s) => s.outcomesHeaderLabel);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24, width: '100%' }}>
@@ -159,7 +160,7 @@ export function Top3OutcomesSection() {
             textTransform: 'uppercase',
           }}
         >
-          Value Delivered
+          {outcomesHeaderLabel}
         </div>
       </div>
 

@@ -13,6 +13,9 @@ import {
   BI_HEALTH_COLORS,
   BI_HEALTH_OPTIONS,
   WATCH_BADGE_PRESETS,
+  DEFAULT_BUSINESS_IMPACT_HEADER_LABEL,
+  DEFAULT_OUTCOMES_HEADER_LABEL,
+  DEFAULT_MODERNISATION_HEADER_LABEL,
 } from '../../store/useNewsletterStore';
 
 // ── Shared micro-styles ───────────────────────────────────────────────────────
@@ -338,7 +341,7 @@ function BIRowEditor({
 }
 
 export function BusinessImpactEditor() {
-  const { businessImpactRows, addBIRow, updateBIRow, deleteBIRow, duplicateBIRow, resetBIRows } = useNewsletterStore();
+  const { businessImpactRows, businessImpactHeaderLabel, setBusinessImpactHeaderLabel, addBIRow, updateBIRow, deleteBIRow, duplicateBIRow, resetBIRows } = useNewsletterStore();
 
   const healthCounts = BI_HEALTH_OPTIONS.reduce((acc, h) => {
     acc[h] = businessImpactRows.filter(r => r.health === h).length;
@@ -373,6 +376,13 @@ export function BusinessImpactEditor() {
       </div>
 
       <Divider />
+      <p style={sectionTitle}>Section Header</p>
+      <div style={{ marginBottom: 10 }}>
+        <p style={lbl}>Right-side Label</p>
+        <input style={{ ...cell, textTransform: 'uppercase', fontWeight: 700 }} value={businessImpactHeaderLabel} onChange={e => setBusinessImpactHeaderLabel(e.target.value)} />
+      </div>
+
+      <Divider />
       <p style={sectionTitle}>Programme Rows</p>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -391,7 +401,7 @@ export function BusinessImpactEditor() {
       </div>
 
       <Divider />
-      <ResetButton label="Reset to defaults" onReset={resetBIRows} />
+      <ResetButton label="Reset to defaults" onReset={() => { resetBIRows(); setBusinessImpactHeaderLabel(DEFAULT_BUSINESS_IMPACT_HEADER_LABEL); }} />
     </div>
   );
 }
@@ -489,7 +499,7 @@ function ModItemEditor({
 }
 
 export function ModernisationEditor() {
-  const { modernisationItems, addModernisationItem, updateModernisationItem, deleteModernisationItem, duplicateModernisationItem, resetModernisationItems } = useNewsletterStore();
+  const { modernisationItems, modernisationHeaderLabel, setModernisationHeaderLabel, addModernisationItem, updateModernisationItem, deleteModernisationItem, duplicateModernisationItem, resetModernisationItems } = useNewsletterStore();
 
   return (
     <div style={{ padding: '12px 14px', fontFamily: 'Inter, sans-serif' }}>
@@ -507,6 +517,12 @@ export function ModernisationEditor() {
         </div>
       </div>
       <Divider />
+      <p style={sectionTitle}>Section Header</p>
+      <div style={{ marginBottom: 10 }}>
+        <p style={lbl}>Right-side Label</p>
+        <input style={{ ...cell, textTransform: 'uppercase', fontWeight: 700 }} value={modernisationHeaderLabel} onChange={e => setModernisationHeaderLabel(e.target.value)} />
+      </div>
+      <Divider />
       <p style={sectionTitle}>Initiative Items</p>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
         {modernisationItems.map(item => (
@@ -517,7 +533,7 @@ export function ModernisationEditor() {
         </button>
       </div>
       <Divider />
-      <ResetButton label="Reset modernisation data" onReset={resetModernisationItems} />
+      <ResetButton label="Reset modernisation data" onReset={() => { resetModernisationItems(); setModernisationHeaderLabel(DEFAULT_MODERNISATION_HEADER_LABEL); }} />
     </div>
   );
 }
@@ -794,7 +810,7 @@ function OutcomeItemEditor({
 }
 
 export function OutcomesEditor() {
-  const { outcomeItems, addOutcomeItem, updateOutcomeItem, deleteOutcomeItem, duplicateOutcomeItem, resetOutcomeItems } = useNewsletterStore();
+  const { outcomeItems, outcomesHeaderLabel, setOutcomesHeaderLabel, addOutcomeItem, updateOutcomeItem, deleteOutcomeItem, duplicateOutcomeItem, resetOutcomeItems } = useNewsletterStore();
 
   return (
     <div style={{ padding: '12px 14px', fontFamily: 'Inter, sans-serif' }}>
@@ -808,6 +824,12 @@ export function OutcomesEditor() {
         </div>
       </div>
       <Divider />
+      <p style={sectionTitle}>Section Header</p>
+      <div style={{ marginBottom: 10 }}>
+        <p style={lbl}>Right-side Label</p>
+        <input style={{ ...cell, textTransform: 'uppercase', fontWeight: 700 }} value={outcomesHeaderLabel} onChange={e => setOutcomesHeaderLabel(e.target.value)} />
+      </div>
+      <Divider />
       <p style={sectionTitle}>Outcome Cards</p>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
         {outcomeItems.map(item => (
@@ -818,7 +840,7 @@ export function OutcomesEditor() {
         </button>
       </div>
       <Divider />
-      <ResetButton label="Reset outcomes" onReset={resetOutcomeItems} />
+      <ResetButton label="Reset outcomes" onReset={() => { resetOutcomeItems(); setOutcomesHeaderLabel(DEFAULT_OUTCOMES_HEADER_LABEL); }} />
     </div>
   );
 }

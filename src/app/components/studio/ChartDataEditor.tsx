@@ -79,11 +79,11 @@ function Divider() {
 function PSEditor() {
   const {
     psData, updatePSRow, addPSRow, deletePSRow,
-    setPSColor, setPSNote, resetPSData, importedData,
+    setPSColor, setPSPeriodLabel, setPSNote, resetPSData, importedData,
     setPSData,
   } = useNewsletterStore();
 
-  const { rows, reportedColor, resolvedColor, resolutionNote, carriedNote } = psData;
+  const { rows, reportedColor, resolvedColor, resolutionNote, carriedNote, periodLabel } = psData;
 
   // Auto-sync from importedData
   const prevImportKey = useRef<string>('');
@@ -126,6 +126,14 @@ function PSEditor() {
         <KpiChip label="Resolved" value={String(totalResolved)} />
         <KpiChip label="Rate" value={`${rate}%`} color="#006b5f" />
         <KpiChip label="Carried" value={String(Math.max(0, totalReported - totalResolved))} color="#ea580c" />
+      </div>
+
+      <Divider />
+
+      <p style={sectionTitle}>Section Header</p>
+      <div style={{ marginBottom: 12 }}>
+        <p style={label}>Right-side Label</p>
+        <input style={{ ...cell, textTransform: 'uppercase', fontWeight: 700 }} value={periodLabel} onChange={e => setPSPeriodLabel(e.target.value)} />
       </div>
 
       <Divider />
@@ -226,10 +234,10 @@ function PSEditor() {
 function RFEditor() {
   const {
     rfData, updateRFRow, addRFRow, deleteRFRow,
-    updateRFCard, addRFCard, deleteRFCard, resetRFData, importedData, setRFData,
+    updateRFCard, addRFCard, deleteRFCard, setRFHeaderLabel, resetRFData, importedData, setRFData,
   } = useNewsletterStore();
 
-  const { cards, rows } = rfData;
+  const { cards, rows, headerLabel } = rfData;
 
   // Auto-sync from importedData
   const prevImportKey = useRef<string>('');
@@ -274,6 +282,7 @@ function RFEditor() {
     }));
 
     setRFData({
+      headerLabel: rfData.headerLabel,
       cards: newCards.length ? newCards : rfData.cards,
       rows:  newRows.length  ? newRows  : rfData.rows,
     });
@@ -281,6 +290,14 @@ function RFEditor() {
 
   return (
     <div style={{ padding: '12px 14px', fontFamily: 'Inter, sans-serif' }}>
+
+      <p style={sectionTitle}>Section Header</p>
+      <div style={{ marginBottom: 12 }}>
+        <p style={label}>Right-side Label</p>
+        <input style={{ ...cell, textTransform: 'uppercase', fontWeight: 700 }} value={headerLabel} onChange={e => setRFHeaderLabel(e.target.value)} />
+      </div>
+
+      <Divider />
 
       {/* Upcoming cards */}
       <p style={sectionTitle}>Upcoming Release Cards</p>

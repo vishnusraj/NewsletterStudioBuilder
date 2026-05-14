@@ -357,6 +357,9 @@ export function TopBar({ canvasRef }: TopBarProps) {
         state.footerData  !== prev.footerData  ||
         state.clientPartnersData !== prev.clientPartnersData ||
         state.monthlySnapshotData !== prev.monthlySnapshotData ||
+        state.businessImpactHeaderLabel !== prev.businessImpactHeaderLabel ||
+        state.outcomesHeaderLabel !== prev.outcomesHeaderLabel ||
+        state.modernisationHeaderLabel !== prev.modernisationHeaderLabel ||
         state.keyMetrics  !== prev.keyMetrics  ||
         state.businessImpactRows !== prev.businessImpactRows ||
         state.outcomeItems !== prev.outcomeItems ||

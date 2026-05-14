@@ -47,7 +47,7 @@ const IS_COMPLETE: Record<RFStatus, boolean> = {
 
 export function ReleaseForecastSection() {
   const { rfData } = useNewsletterStore();
-  const { cards, rows } = rfData;
+  const { cards, rows, headerLabel } = rfData;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24, width: '100%', ...S }}>
@@ -72,7 +72,7 @@ export function ReleaseForecastSection() {
         </div>
         {/* Right: label */}
         <span style={{ ...S, fontWeight: 700, fontSize: 9, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.9px' }}>
-          UPCOMING RELEASES
+          {headerLabel}
         </span>
       </div>
 

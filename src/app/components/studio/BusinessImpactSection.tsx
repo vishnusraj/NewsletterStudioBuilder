@@ -109,7 +109,7 @@ function DataRow({ row, striped }: { row: BIRow; striped: boolean }) {
 // ── Section ───────────────────────────────────────────────────────────────────
 
 export function BusinessImpactSection() {
-  const { businessImpactRows } = useNewsletterStore();
+  const { businessImpactRows, businessImpactHeaderLabel } = useNewsletterStore();
   const rows = businessImpactRows;
 
   return (
@@ -129,7 +129,7 @@ export function BusinessImpactSection() {
           </span>
         </div>
         <span style={{ ...S, fontWeight: 700, fontSize: 9, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.9px' }}>
-          LAST 30 DAYS
+          {businessImpactHeaderLabel}
         </span>
       </div>
 

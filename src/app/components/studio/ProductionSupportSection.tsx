@@ -9,7 +9,7 @@ const S: React.CSSProperties = { fontFamily: 'Inter, sans-serif' };
 
 export function ProductionSupportSection() {
   const { psData } = useNewsletterStore();
-  const { rows, reportedColor, resolvedColor, resolutionNote, carriedNote } = psData;
+  const { rows, reportedColor, resolvedColor, resolutionNote, carriedNote, periodLabel } = psData;
 
   const totalReported  = rows.reduce((s, r) => s + Number(r.reported || 0), 0);
   const totalResolved  = rows.reduce((s, r) => s + Number(r.resolved  || 0), 0);
@@ -43,7 +43,7 @@ export function ProductionSupportSection() {
         </div>
         {/* Right: period label */}
         <span style={{ ...S, fontWeight: 700, fontSize: 9, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.9px' }}>
-          FEBRUARY 2026
+          {periodLabel}
         </span>
       </div>
 
