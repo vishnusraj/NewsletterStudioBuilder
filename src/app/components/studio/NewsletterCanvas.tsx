@@ -19,6 +19,7 @@ import { WatchItemsSection } from './WatchItemsSection';
 import { Top3OutcomesSection } from './Top3OutcomesSection';
 import { MonthlySnapshotSection } from './MonthlySnapshotSection';
 import { ClientPartnersSection } from './ClientPartnersSection';
+import { ThankYouSection } from './ThankYouSection';
 
 interface NewsletterCanvasProps {
   canvasRef: React.MutableRefObject<HTMLDivElement | null>;
@@ -69,6 +70,10 @@ WATCH_CONTAINER.style.width = '100%';
 WATCH_CONTAINER.setAttribute('data-dynamic-section', 'watch-items');
 
 // Footer container — not a section, appended after all sections
+const THANK_YOU_CONTAINER = document.createElement('div');
+THANK_YOU_CONTAINER.style.width = '100%';
+THANK_YOU_CONTAINER.setAttribute('data-dynamic-section', 'thank-you');
+
 const FOOTER_CONTAINER = document.createElement('div');
 FOOTER_CONTAINER.style.width = '100%';
 FOOTER_CONTAINER.setAttribute('data-dynamic-section', 'footer');
@@ -377,7 +382,9 @@ export function NewsletterCanvas({ canvasRef }: NewsletterCanvasProps) {
     mainDiv.appendChild(innerDiv);
     newsletterRoot.appendChild(mainDiv);
 
-    // ── Footer (live portal — not a DOM clone) ────────────────────────────
+    // ── Thank-you strip + footer (live portals — not DOM clones) ──────────
+    newsletterRoot.appendChild(THANK_YOU_CONTAINER);
+
     // Style the footer container to be clickable with a cursor
     FOOTER_CONTAINER.style.cursor     = 'pointer';
     FOOTER_CONTAINER.style.transition = 'outline 0.1s';
@@ -579,6 +586,7 @@ export function NewsletterCanvas({ canvasRef }: NewsletterCanvasProps) {
       {loaded && createPortal(<BusinessImpactSection />,    BI_CONTAINER)}
       {loaded && createPortal(<Top3OutcomesSection />,      OUTCOMES_CONTAINER)}
       {loaded && createPortal(<WatchItemsSection />,        WATCH_CONTAINER)}
+      {loaded && createPortal(<ThankYouSection />,          THANK_YOU_CONTAINER)}
       {loaded && createPortal(<FooterSection />,            FOOTER_CONTAINER)}
     </div>
   );

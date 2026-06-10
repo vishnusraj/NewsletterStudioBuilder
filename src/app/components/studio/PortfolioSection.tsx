@@ -91,7 +91,7 @@ export function PortfolioSection() {
   const gridTemplateColumns = `repeat(${cols}, minmax(0, 1fr))`;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 24, width: '100%', paddingBottom: 80, boxSizing: 'border-box', ...S }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24, width: '100%', paddingBottom: 32, boxSizing: 'border-box', ...S }}>
 
       {/* ── Section heading bar ───────────────────────────────────────────── */}
       <div style={{
