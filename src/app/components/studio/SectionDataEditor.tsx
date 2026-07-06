@@ -742,7 +742,51 @@ export function MonthlySnapshotEditor() {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// 7. TOP 3 OUTCOMES EDITOR
+// 7. THANK YOU EDITOR
+// ═══════════════════════════════════════════════════════════════════════════════
+
+export function ThankYouEditor() {
+  const { thankYouData, updateThankYouField, resetThankYouData } = useNewsletterStore();
+
+  return (
+    <div style={{ padding: '12px 14px', fontFamily: 'Inter, sans-serif' }}>
+      <div style={{ display: 'flex', gap: 6, marginBottom: 12 }}>
+        <div style={{ flex: 1, background: '#f9fafb', borderRadius: 4, padding: '5px 6px', border: '1px solid #f3f4f6', textAlign: 'center' }}>
+          <div style={{ fontSize: 9, color: '#9ca3af', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Section</div>
+          <div style={{ fontSize: 16, fontWeight: 900, color: '#1a1a1a', marginTop: 1 }}>1</div>
+        </div>
+        <div style={{ flex: 2, background: '#eff6ff', borderRadius: 4, padding: '5px 8px', border: '1px solid #bfdbfe', display: 'flex', alignItems: 'center' }}>
+          <span style={{ fontSize: 9, color: '#1d4ed8', fontWeight: 600 }}>Closing contact strip above the footer</span>
+        </div>
+      </div>
+      <Divider />
+      <p style={sectionTitle}>Thank You Content</p>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+        <div>
+          <p style={lbl}>Heading</p>
+          <input style={{ ...cell, textTransform: 'uppercase', fontWeight: 800, letterSpacing: '0.08em' }} value={thankYouData.heading} onChange={e => updateThankYouField('heading', e.target.value)} />
+        </div>
+        <div>
+          <p style={lbl}>Message</p>
+          <textarea style={{ ...cell, minHeight: 72, resize: 'vertical' }} value={thankYouData.message} onChange={e => updateThankYouField('message', e.target.value)} />
+        </div>
+        <div>
+          <p style={lbl}>Email</p>
+          <input style={{ ...cell, fontWeight: 700 }} value={thankYouData.email} onChange={e => updateThankYouField('email', e.target.value)} />
+        </div>
+        <div>
+          <p style={lbl}>Website</p>
+          <input style={{ ...cell, fontWeight: 700 }} value={thankYouData.website} onChange={e => updateThankYouField('website', e.target.value)} />
+        </div>
+      </div>
+      <Divider />
+      <ResetButton label="Reset thank you section" onReset={resetThankYouData} />
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// 8. TOP 3 OUTCOMES EDITOR
 // ═══════════════════════════════════════════════════════════════════════════════
 
 function OutcomeItemEditor({
@@ -846,7 +890,7 @@ export function OutcomesEditor() {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// 8. WATCH ITEMS EDITOR
+// 9. WATCH ITEMS EDITOR
 // ═══════════════════════════════════════════════════════════════════════════════
 
 const WATCH_PRESETS = [

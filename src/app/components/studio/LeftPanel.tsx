@@ -21,13 +21,14 @@ const SECTION_TYPES = [
   { type: 'release-forecast', label: 'Release Forecast', icon: '🚀' },
   { type: 'modernisation', label: 'Modernisation & Innovation', icon: '⚡' },
   { type: 'portfolio', label: 'Portfolio at a Glance', icon: '📁' },
+  { type: 'thank-you', label: 'Thank You', icon: '🙏' },
 ];
 
 // Map section types to their original DOM indices
 const TYPE_TO_INDEX: Record<string, number> = {
   'client-partners': 0, 'monthly-snapshot': 1, 'metrics': 2,
   'business-impact': 3, 'top3-outcomes': 4, 'production-support': 5,
-  'watch-items': 6, 'release-forecast': 7, 'modernisation': 8, 'portfolio': 9,
+  'watch-items': 6, 'release-forecast': 7, 'modernisation': 8, 'portfolio': 9, 'thank-you': 10,
 };
 
 export function LeftPanel() {

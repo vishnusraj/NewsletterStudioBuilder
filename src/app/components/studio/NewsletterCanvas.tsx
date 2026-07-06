@@ -69,7 +69,6 @@ const WATCH_CONTAINER = document.createElement('div');
 WATCH_CONTAINER.style.width = '100%';
 WATCH_CONTAINER.setAttribute('data-dynamic-section', 'watch-items');
 
-// Footer container — not a section, appended after all sections
 const THANK_YOU_CONTAINER = document.createElement('div');
 THANK_YOU_CONTAINER.style.width = '100%';
 THANK_YOU_CONTAINER.setAttribute('data-dynamic-section', 'thank-you');
@@ -90,6 +89,7 @@ const DYNAMIC_SECTION_TYPES = new Set([
   'business-impact',
   'top3-outcomes',
   'watch-items',
+  'thank-you',
 ]);
 
 // ── Static section text-element tags ─────────────────────────────────────────
@@ -181,6 +181,7 @@ export function NewsletterCanvas({ canvasRef }: NewsletterCanvasProps) {
   const biSectionIdRef          = useRef<string | null>(null);
   const outcomesSectionIdRef    = useRef<string | null>(null);
   const watchSectionIdRef       = useRef<string | null>(null);
+  const thankYouSectionIdRef    = useRef<string | null>(null);
   const coverDataRef            = useRef<CoverData>(DEFAULT_COVER_DATA);
   const sectionOverridesRef     = useRef<Record<string, Record<string, string>>>({});
 
@@ -243,6 +244,7 @@ export function NewsletterCanvas({ canvasRef }: NewsletterCanvasProps) {
     BI_CONTAINER.addEventListener('click',       makeHandler(biSectionIdRef));
     OUTCOMES_CONTAINER.addEventListener('click', makeHandler(outcomesSectionIdRef));
     WATCH_CONTAINER.addEventListener('click',    makeHandler(watchSectionIdRef));
+    THANK_YOU_CONTAINER.addEventListener('click', makeHandler(thankYouSectionIdRef));
 
     // Footer click → select the special '__footer__' id to open footer editor
     FOOTER_CONTAINER.addEventListener('click', (e) => {
@@ -315,6 +317,7 @@ export function NewsletterCanvas({ canvasRef }: NewsletterCanvasProps) {
           case 'business-impact':    container = BI_CONTAINER;        biSectionIdRef.current        = section.id; break;
           case 'top3-outcomes':      container = OUTCOMES_CONTAINER;  outcomesSectionIdRef.current  = section.id; break;
           case 'watch-items':        container = WATCH_CONTAINER;     watchSectionIdRef.current     = section.id; break;
+          case 'thank-you':          container = THANK_YOU_CONTAINER; thankYouSectionIdRef.current   = section.id; break;
           default: return;
         }
 
@@ -382,10 +385,7 @@ export function NewsletterCanvas({ canvasRef }: NewsletterCanvasProps) {
     mainDiv.appendChild(innerDiv);
     newsletterRoot.appendChild(mainDiv);
 
-    // ── Thank-you strip + footer (live portals — not DOM clones) ──────────
-    newsletterRoot.appendChild(THANK_YOU_CONTAINER);
-
-    // Style the footer container to be clickable with a cursor
+    // ── Footer (live portal — not a DOM clone) ────────────────────────────
     FOOTER_CONTAINER.style.cursor     = 'pointer';
     FOOTER_CONTAINER.style.transition = 'outline 0.1s';
     FOOTER_CONTAINER.setAttribute('role', 'button');

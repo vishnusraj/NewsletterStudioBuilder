@@ -33,6 +33,7 @@ const SECTION_INFO: Record<string, { description: string; elements: string[] }> 
   'release-forecast':  { description: 'Dynamic release schedule with live progress bars and status per project.',elements: ['Project name', 'Release item', 'Progress %', 'Progress bar', 'Schedule', 'Status'] },
   'modernisation':     { description: 'Fully dynamic innovation initiatives — add, edit, remove cards.',        elements: ['Initiative title', 'Description', 'Status badge (8 presets)'] },
   'portfolio':         { description: 'Fully dynamic platform portfolio — add, edit, highlight cards.',         elements: ['Platform category', 'Platform name', 'Tagline', 'Description', 'Tech stack', 'Highlighted flag'] },
+  'thank-you':         { description: 'Minimal closing strip above the footer with contact details and a short sign-off.', elements: ['Heading', 'Message', 'Email address', 'Website'] },
 };
 
 // ── Tab definitions ───────────────────────────────────────────────────────────
@@ -66,7 +67,7 @@ function InspectTab() {
 
   const isDataSection = [
     'client-partners', 'monthly-snapshot', 'production-support', 'release-forecast', 'modernisation', 'portfolio',
-    'metrics', 'business-impact', 'top3-outcomes', 'watch-items',
+    'metrics', 'business-impact', 'top3-outcomes', 'watch-items', 'thank-you',
   ].includes(selectedSection?.type ?? '');
 
   const hasOverrides = selectedSection
@@ -351,6 +352,7 @@ export function RightPanel() {
         selectedType === 'portfolio'           ||
         selectedType === 'top3-outcomes'       ||
         selectedType === 'watch-items'         ||
+        selectedType === 'thank-you'           ||
         selectedType === 'metrics'             ||
         selectedType === 'business-impact'
       ) {
@@ -390,6 +392,7 @@ export function RightPanel() {
               selectedType === 'portfolio'           ||
               selectedType === 'top3-outcomes'       ||
               selectedType === 'watch-items'         ||
+              selectedType === 'thank-you'           ||
               selectedType === 'metrics'             ||
               selectedType === 'business-impact'
             );

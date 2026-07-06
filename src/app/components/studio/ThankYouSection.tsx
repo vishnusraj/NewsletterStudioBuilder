@@ -1,6 +1,15 @@
 import React from 'react';
+import { useNewsletterStore } from '../../store/useNewsletterStore';
 
 export function ThankYouSection() {
+  const { thankYouData } = useNewsletterStore();
+  const emailHref = thankYouData.email.startsWith('mailto:')
+    ? thankYouData.email
+    : `mailto:${thankYouData.email}`;
+  const websiteHref = /^https?:\/\//i.test(thankYouData.website)
+    ? thankYouData.website
+    : `https://${thankYouData.website}`;
+
   return (
     <div
       style={{
@@ -37,7 +46,7 @@ export function ThankYouSection() {
               color: '#f05a29',
             }}
           >
-            Thank You
+            {thankYouData.heading}
           </span>
           <span
             style={{
@@ -49,7 +58,7 @@ export function ThankYouSection() {
               maxWidth: 620,
             }}
           >
-            Stay connected for updates, ideas, and opportunities to build what&apos;s next.
+            {thankYouData.message}
           </span>
         </div>
 
@@ -63,7 +72,8 @@ export function ThankYouSection() {
           }}
         >
           <a
-            href="mailto:info@saksoft.com"
+            href={emailHref}
+            onClick={(e) => e.preventDefault()}
             style={{
               fontFamily: 'Inter, sans-serif',
               fontWeight: 700,
@@ -75,12 +85,13 @@ export function ThankYouSection() {
               textDecoration: 'none',
             }}
           >
-            info@saksoft.com
+            {thankYouData.email}
           </a>
           <a
-            href="https://www.saksoft.com"
+            href={websiteHref}
             target="_blank"
             rel="noreferrer"
+            onClick={(e) => e.preventDefault()}
             style={{
               fontFamily: 'Inter, sans-serif',
               fontWeight: 700,
@@ -92,7 +103,7 @@ export function ThankYouSection() {
               textDecoration: 'none',
             }}
           >
-            www.saksoft.com
+            {thankYouData.website}
           </a>
         </div>
       </div>

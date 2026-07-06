@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { Plus, Trash2, RotateCcw, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import { useNewsletterStore, type RFStatus, WATCH_BADGE_PRESETS } from '../../store/useNewsletterStore';
-import { ModernisationEditor, PortfolioEditor, MetricsEditor, BusinessImpactEditor, WatchItemsEditor, OutcomesEditor, MonthlySnapshotEditor, ClientPartnersEditor } from './SectionDataEditor';
+import { ModernisationEditor, PortfolioEditor, MetricsEditor, BusinessImpactEditor, WatchItemsEditor, OutcomesEditor, MonthlySnapshotEditor, ClientPartnersEditor, ThankYouEditor } from './SectionDataEditor';
 
 // ── All valid RF statuses (order matters — shown in dropdown) ─────────────────
 // 'CLOSED' is added as the last terminal state.
@@ -741,6 +741,7 @@ export function ChartDataEditor() {
   const isBI  = sectionType === 'business-impact';
   const isOut = sectionType === 'top3-outcomes';
   const isWI  = sectionType === 'watch-items';
+  const isTY  = sectionType === 'thank-you';
 
   if (isCP) return (
     <div style={{ flex: 1, overflowY: 'auto' }}>
@@ -809,6 +810,13 @@ export function ChartDataEditor() {
     <div style={{ flex: 1, overflowY: 'auto' }}>
       <SectionBanner label="Strategic Watch Items" emoji="👁️" />
       <WatchItemsDataEditor />
+    </div>
+  );
+
+  if (isTY) return (
+    <div style={{ flex: 1, overflowY: 'auto' }}>
+      <SectionBanner label="Thank You" emoji="🙏" />
+      <ThankYouEditor />
     </div>
   );
 

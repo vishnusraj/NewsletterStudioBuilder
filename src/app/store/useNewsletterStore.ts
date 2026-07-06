@@ -80,6 +80,22 @@ export const DEFAULT_MONTHLY_SNAPSHOT_DATA: MonthlySnapshotData = {
   bodyText: 'Platform reliability was hardened with zero operational disruption, payment accuracy improved reducing finance rework, and field-lead mobile workflows simplified. Cloud consolidation evaluation and FX-Exchange 3.0 are positioning the portfolio for scalable Q2 growth. Production support closed at 77% resolution rate with no critical issues outstanding.',
 };
 
+// ── Thank You ────────────────────────────────────────────────────────────────
+
+export interface ThankYouData {
+  heading: string;
+  message: string;
+  email: string;
+  website: string;
+}
+
+export const DEFAULT_THANK_YOU_DATA: ThankYouData = {
+  heading: 'THANK YOU',
+  message: 'Stay connected for updates, ideas, and opportunities to build what\'s next.',
+  email: 'info@saksoft.com',
+  website: 'www.saksoft.com',
+};
+
 export const DEFAULT_BUSINESS_IMPACT_HEADER_LABEL = 'LAST 30 DAYS';
 export const DEFAULT_OUTCOMES_HEADER_LABEL = 'VALUE DELIVERED';
 export const DEFAULT_MODERNISATION_HEADER_LABEL = 'STRATEGIC INVESTMENTS';
@@ -295,6 +311,7 @@ export interface VersionSnapshot {
   footerData:           FooterData;
   clientPartnersData:   ClientPartnersData;
   monthlySnapshotData:  MonthlySnapshotData;
+  thankYouData:         ThankYouData;
   businessImpactHeaderLabel: string;
   outcomesHeaderLabel: string;
   modernisationHeaderLabel: string;
@@ -329,6 +346,7 @@ interface NewsletterStore {
   coverData: CoverData; footerData: FooterData;
   clientPartnersData: ClientPartnersData;
   monthlySnapshotData: MonthlySnapshotData;
+  thankYouData: ThankYouData;
   businessImpactHeaderLabel: string;
   outcomesHeaderLabel: string;
   modernisationHeaderLabel: string;
@@ -361,6 +379,10 @@ interface NewsletterStore {
   setMonthlySnapshotData: (d: Partial<MonthlySnapshotData>) => void;
   updateMonthlySnapshotField: (k: keyof MonthlySnapshotData, v: string) => void;
   resetMonthlySnapshotData: () => void;
+  // thank you
+  setThankYouData: (d: Partial<ThankYouData>) => void;
+  updateThankYouField: (k: keyof ThankYouData, v: string) => void;
+  resetThankYouData: () => void;
   // section header labels
   setBusinessImpactHeaderLabel: (v: string) => void;
   setOutcomesHeaderLabel: (v: string) => void;
@@ -429,22 +451,37 @@ const DEFAULT_SECTIONS: NewsletterSection[] = [
   { id: 'release-forecast-1',   type: 'release-forecast',   label: 'Release Forecast',           icon: '🚀', originalIndex: 7, visible: true, order: 7 },
   { id: 'modernisation-1',      type: 'modernisation',      label: 'Modernisation & Innovation', icon: '⚡', originalIndex: 8, visible: true, order: 8 },
   { id: 'portfolio-1',          type: 'portfolio',          label: 'Portfolio at a Glance',      icon: '📁', originalIndex: 9, visible: true, order: 9 },
+  { id: 'thank-you-1',          type: 'thank-you',          label: 'Thank You',                  icon: '🙏', originalIndex: 10, visible: true, order: 10 },
 ];
 
 const SECTION_ORIGINAL_INDICES: Record<string, number> = {
   'client-partners': 0, 'monthly-snapshot': 1, 'metrics': 2,
   'business-impact': 3, 'top3-outcomes': 4,    'production-support': 5,
-  'watch-items': 6,     'release-forecast': 7, 'modernisation': 8, 'portfolio': 9,
+  'watch-items': 6,     'release-forecast': 7, 'modernisation': 8, 'portfolio': 9, 'thank-you': 10,
 };
+
+function normalizeSections(sections: NewsletterSection[]): NewsletterSection[] {
+  const existingTypes = new Set(sections.map(section => section.type));
+  const next = [...sections];
+
+  DEFAULT_SECTIONS.forEach((section) => {
+    if (!existingTypes.has(section.type)) next.push({ ...section });
+  });
+
+  return next
+    .sort((a, b) => a.order - b.order)
+    .map((section, index) => ({ ...section, order: index }));
+}
 
 function makeDefaultState() {
   return {
-    sections:             DEFAULT_SECTIONS,
+    sections:             normalizeSections(DEFAULT_SECTIONS),
     zoom:                 65,
     coverData:            { ...DEFAULT_COVER_DATA },
     footerData:           { ...DEFAULT_FOOTER_DATA },
     clientPartnersData:   { client: { ...DEFAULT_CLIENT_PARTNERS_DATA.client }, partner: { ...DEFAULT_CLIENT_PARTNERS_DATA.partner } },
     monthlySnapshotData:  { ...DEFAULT_MONTHLY_SNAPSHOT_DATA },
+    thankYouData:         { ...DEFAULT_THANK_YOU_DATA },
     businessImpactHeaderLabel: DEFAULT_BUSINESS_IMPACT_HEADER_LABEL,
     outcomesHeaderLabel: DEFAULT_OUTCOMES_HEADER_LABEL,
     modernisationHeaderLabel: DEFAULT_MODERNISATION_HEADER_LABEL,
@@ -501,7 +538,7 @@ export const useNewsletterStore = create<NewsletterStore>()(
       }),
       setZoom: (zoom) => set({ zoom }),
       toggleEditMode: () => set((s) => ({ editMode: !s.editMode })),
-      resetSections: () => set({ sections: DEFAULT_SECTIONS, selectedSectionId: null }),
+      resetSections: () => set({ sections: normalizeSections(DEFAULT_SECTIONS), selectedSectionId: null }),
 
       // import
       setImportedData: (data) => set({ importedData: data }),
@@ -534,6 +571,11 @@ export const useNewsletterStore = create<NewsletterStore>()(
       setMonthlySnapshotData: (data) => set((s) => ({ monthlySnapshotData: { ...s.monthlySnapshotData, ...data } })),
       updateMonthlySnapshotField: (key, value) => set((s) => ({ monthlySnapshotData: { ...s.monthlySnapshotData, [key]: value } })),
       resetMonthlySnapshotData: () => set({ monthlySnapshotData: { ...DEFAULT_MONTHLY_SNAPSHOT_DATA } }),
+
+      // thank you
+      setThankYouData: (data) => set((s) => ({ thankYouData: { ...s.thankYouData, ...data } })),
+      updateThankYouField: (key, value) => set((s) => ({ thankYouData: { ...s.thankYouData, [key]: value } })),
+      resetThankYouData: () => set({ thankYouData: { ...DEFAULT_THANK_YOU_DATA } }),
 
       // section header labels
       setBusinessImpactHeaderLabel: (value) => set({ businessImpactHeaderLabel: value }),
@@ -678,6 +720,7 @@ export const useNewsletterStore = create<NewsletterStore>()(
           footerData:           { ...s.footerData },
           clientPartnersData:   { client: { ...s.clientPartnersData.client }, partner: { ...s.clientPartnersData.partner } },
           monthlySnapshotData:  { ...s.monthlySnapshotData },
+          thankYouData:         { ...s.thankYouData },
           businessImpactHeaderLabel: s.businessImpactHeaderLabel,
           outcomesHeaderLabel: s.outcomesHeaderLabel,
           modernisationHeaderLabel: s.modernisationHeaderLabel,
@@ -690,7 +733,7 @@ export const useNewsletterStore = create<NewsletterStore>()(
           modernisationItems:   s.modernisationItems.map(i => ({ ...i })),
           portfolioItems:       s.portfolioItems.map(i => ({ ...i })),
           sectionTextOverrides: JSON.parse(JSON.stringify(s.sectionTextOverrides)),
-          sections:             s.sections.map(sec => ({ ...sec })),
+          sections:             normalizeSections(s.sections.map(sec => ({ ...sec }))),
           themeColors:          { ...s.themeColors },
           zoom:                 s.zoom,
         };
@@ -716,6 +759,7 @@ export const useNewsletterStore = create<NewsletterStore>()(
           footerData:           { ...d.footerData },
           clientPartnersData:   d.clientPartnersData ? { client: { ...d.clientPartnersData.client }, partner: { ...d.clientPartnersData.partner } } : { client: { ...DEFAULT_CLIENT_PARTNERS_DATA.client }, partner: { ...DEFAULT_CLIENT_PARTNERS_DATA.partner } },
           monthlySnapshotData:  d.monthlySnapshotData ? { ...d.monthlySnapshotData } : { ...DEFAULT_MONTHLY_SNAPSHOT_DATA },
+          thankYouData:         d.thankYouData ? { ...d.thankYouData } : { ...DEFAULT_THANK_YOU_DATA },
           businessImpactHeaderLabel: d.businessImpactHeaderLabel ?? DEFAULT_BUSINESS_IMPACT_HEADER_LABEL,
           outcomesHeaderLabel: d.outcomesHeaderLabel ?? DEFAULT_OUTCOMES_HEADER_LABEL,
           modernisationHeaderLabel: d.modernisationHeaderLabel ?? DEFAULT_MODERNISATION_HEADER_LABEL,
@@ -728,7 +772,7 @@ export const useNewsletterStore = create<NewsletterStore>()(
           modernisationItems:   d.modernisationItems.map(i => ({ ...i })),
           portfolioItems:       d.portfolioItems.map(i => ({ ...i })),
           sectionTextOverrides: JSON.parse(JSON.stringify(d.sectionTextOverrides)),
-          sections:             d.sections.map(sec => ({ ...sec })),
+          sections:             normalizeSections(d.sections.map(sec => ({ ...sec }))),
           themeColors:          { ...d.themeColors },
           zoom:                 d.zoom,
           activeVersionId:      id,
@@ -750,9 +794,9 @@ export const useNewsletterStore = create<NewsletterStore>()(
     {
       name:    'newsletterStudio_state_v1',
       storage: createJSONStorage(makeSafeStorage),
-      version: 9,
+      version: 10,
       partialize: (s) => ({
-        sections: s.sections, zoom: s.zoom, coverData: s.coverData, footerData: s.footerData, clientPartnersData: s.clientPartnersData, monthlySnapshotData: s.monthlySnapshotData, businessImpactHeaderLabel: s.businessImpactHeaderLabel, outcomesHeaderLabel: s.outcomesHeaderLabel, modernisationHeaderLabel: s.modernisationHeaderLabel,
+        sections: s.sections, zoom: s.zoom, coverData: s.coverData, footerData: s.footerData, clientPartnersData: s.clientPartnersData, monthlySnapshotData: s.monthlySnapshotData, thankYouData: s.thankYouData, businessImpactHeaderLabel: s.businessImpactHeaderLabel, outcomesHeaderLabel: s.outcomesHeaderLabel, modernisationHeaderLabel: s.modernisationHeaderLabel,
         keyMetrics: s.keyMetrics, businessImpactRows: s.businessImpactRows, outcomeItems: s.outcomeItems, watchItems: s.watchItems,
         themeColors: s.themeColors, psData: s.psData, rfData: s.rfData,
         modernisationItems: s.modernisationItems, portfolioItems: s.portfolioItems,
@@ -764,7 +808,7 @@ export const useNewsletterStore = create<NewsletterStore>()(
         const d = makeDefaultState();
         try {
           return {
-            sections:             Array.isArray(p.sections)&&p.sections.length ? p.sections : d.sections,
+            sections:             Array.isArray(p.sections)&&p.sections.length ? normalizeSections(p.sections as NewsletterSection[]) : d.sections,
             zoom:                 typeof p.zoom==='number' ? p.zoom : d.zoom,
             coverData:            p.coverData ? {...d.coverData,...(p.coverData as object)} : d.coverData,
             footerData:           p.footerData ? {...d.footerData,...(p.footerData as object)} : d.footerData,
@@ -773,6 +817,7 @@ export const useNewsletterStore = create<NewsletterStore>()(
               partner: { ...d.clientPartnersData.partner, ...((p.clientPartnersData as any).partner ?? {}) },
             } : d.clientPartnersData,
             monthlySnapshotData:  p.monthlySnapshotData ? {...d.monthlySnapshotData,...(p.monthlySnapshotData as object)} : d.monthlySnapshotData,
+            thankYouData:         p.thankYouData ? {...d.thankYouData,...(p.thankYouData as object)} : d.thankYouData,
             businessImpactHeaderLabel: typeof p.businessImpactHeaderLabel === 'string' ? p.businessImpactHeaderLabel : d.businessImpactHeaderLabel,
             outcomesHeaderLabel: typeof p.outcomesHeaderLabel === 'string' ? p.outcomesHeaderLabel : d.outcomesHeaderLabel,
             modernisationHeaderLabel: typeof p.modernisationHeaderLabel === 'string' ? p.modernisationHeaderLabel : d.modernisationHeaderLabel,
